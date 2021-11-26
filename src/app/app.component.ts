@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
 import { environment } from 'src/environments/environment';
+import QBoard from './lib/qboard';
 import { PubnubService } from './pubnub.service';
 
 declare const PubNub: any;
@@ -18,7 +19,14 @@ export class AppComponent implements OnInit {
   constructor(private pubnubService: PubnubService) { }
 
   ngOnInit() {
-    this.initPubnub();
+    // this.initPubnub();
+
+    (window as any).qboard = new QBoard(
+      document.querySelector("#QBoard"),
+      document.querySelector("#BaseQBoard"),
+      1600,
+      900
+    );
   }
 
   loadScript(url: string = 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.5.min.js') {

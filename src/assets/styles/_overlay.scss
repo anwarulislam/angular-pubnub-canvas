@@ -1,0 +1,50 @@
+.overlay {
+  left: 0;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  transition: opacity 0.2s;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+
+  &.visibility-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &.visibility-1 {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &.visibility-0 {
+    display: none;
+  }
+}
+
+.overlay > div {
+  background: #edeff0;
+  padding: 0.25em;
+}
+
+.drop-area {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+
+  &.active {
+    background: #526e88;
+  }
+}
+
+@import "pagination";
+@import "undoredo";
+@import "toolbar";
+@import "stylebar";

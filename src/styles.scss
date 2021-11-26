@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+
+body {
+    background-color: #262626;
+    color: #262626;
+    font-family: "Lato", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Verdana", sans-serif;
+    font-size: 12px;
+    font-size: clamp(9px, 2.4vw, 20px);
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body,
+.container {
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.canvas-container {
+    position: absolute !important;
+}
+
+#BaseQBoard {
+    box-shadow: #121212 0 0 1em 0.5em;
+}
+
+@import "assets/styles/buttons";
+@import "assets/styles/overlay";
+@import "assets/styles/modals";
+@import "assets/styles/contextmenu";
