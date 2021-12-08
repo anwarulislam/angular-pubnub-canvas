@@ -1,0 +1,12 @@
+<div class="container">
+    <canvas #baseBoard width="800" height="800"></canvas>
+    <canvas #whiteBoard width="800" height="800"></canvas>
+</div>
+
+
+<div class="overlay visibility-2">
+    <div>
+        <app-toolbar [currentTool]="qboard.activeTool" [tools]="qboard.tools"
+            (onAction)="qboard.action.doAction($event)"></app-toolbar>
+    </div>
+</div>

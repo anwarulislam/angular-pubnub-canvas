@@ -1,0 +1,15 @@
+<div class="toolbar visibility-2">
+
+    <ng-container *ngFor="let item of items">
+
+        <button [tooltip]="item.action | actionName" data-tip [attr.data-for]="item.action"
+            [ngClass]="{'active': item.tool.isActive()}" [innerHTML]="item.action | fasIcon"
+            (click)="onClickButton(item.action)">
+        </button>
+
+    </ng-container>
+
+    <!-- <OverlayButton action={action} callback={props.doAction} className={tool.isActive() ? "active" : undefined}
+        key={action} /> -->
+
+</div>

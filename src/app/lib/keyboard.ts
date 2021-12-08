@@ -1,4 +1,4 @@
-import keyboardJS from "keyboardjs";
+import * as keyboardJS from "keyboardjs";
 
 import { Action } from "./action";
 

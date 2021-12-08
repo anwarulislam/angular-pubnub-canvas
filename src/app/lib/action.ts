@@ -63,7 +63,7 @@ export enum Action {
   ExitFullScreen = "exitFullScreen",
 }
 
-const nameMap: PartialRecord<Action, string> = {
+export const nameMap: PartialRecord<Action, string> = {
   previousPage: "–Page",
   nextPage: "+Page",
   addPageStart: "-Page",
