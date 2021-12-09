@@ -1,8 +1,9 @@
-<div class="container" [ngClass]="{'readonly': option.readonly}">
-    <canvas #baseBoard width="800" height="800"></canvas>
-    <canvas #whiteBoard width="800" height="800"></canvas>
+<div id="whiteboard-area">
 </div>
-
+<div [ngClass]="{'readonly': option.readonly}">
+    <canvas #baseBoard [width]="canvasWidth" [height]="canvasHeight"></canvas>
+    <canvas #whiteBoard [width]="canvasWidth" [height]="canvasHeight"></canvas>
+</div>
 
 <ng-template [ngIf]="option.showToolbar">
     <div class="overlay visibility-2">
@@ -12,8 +13,3 @@
         </div>
     </div>
 </ng-template>
-
-
-<pre style="color: white; margin-top: 700px;">
-    <!-- {{qboard.activeTool | json}} -->
-</pre>

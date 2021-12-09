@@ -15,6 +15,9 @@ export default class Page extends fabric.Canvas {
   modified = false;
 
   fitToWindow = (canvasWidth: number, canvasHeight: number): void => {
+    let mainArea = document.getElementById("whiteboard-area");
+    // const widthRatio = mainArea.clientWidth / canvasWidth;
+    // const heightRatio = mainArea.clientHeight / canvasHeight;
     const widthRatio = window.innerWidth / canvasWidth;
     const heightRatio = window.innerHeight / canvasHeight;
     this.setZoom(Math.min(widthRatio, heightRatio));

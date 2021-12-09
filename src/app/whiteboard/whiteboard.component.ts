@@ -30,6 +30,9 @@ export class WhiteboardComponent implements OnInit {
 
   @Output() cursorPosition = new EventEmitter<any>();
 
+  canvasHeight: number = 1080
+  canvasWidth: number = 1920
+
 
   baseBoard: HTMLCanvasElement;
   whiteBoard: HTMLCanvasElement;
@@ -50,8 +53,8 @@ export class WhiteboardComponent implements OnInit {
     (window as any).qboard = new QBoard(
       this.whiteBoard as any,
       this.baseBoard as any,
-      800,
-      800
+      this.canvasWidth,
+      this.canvasHeight,
     );
 
     this.qboard = (window as any).qboard;
