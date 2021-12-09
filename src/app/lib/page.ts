@@ -13,13 +13,19 @@ export default class Page extends fabric.Canvas {
 
   latestId = 0;
   modified = false;
-
+  
   fitToWindow = (canvasWidth: number, canvasHeight: number): void => {
-    let mainArea = document.getElementById("whiteboard-area");
-    // const widthRatio = mainArea.clientWidth / canvasWidth;
-    // const heightRatio = mainArea.clientHeight / canvasHeight;
-    const widthRatio = window.innerWidth / canvasWidth;
-    const heightRatio = window.innerHeight / canvasHeight;
+    
+    let widthRatio = window.innerWidth / canvasWidth;
+    let heightRatio = window.innerHeight / canvasHeight;
+    
+    if (window.innerWidth > 1200) {
+      widthRatio = canvasWidth / canvasWidth;
+      heightRatio = canvasHeight / canvasHeight;
+    }
+
+    console.log(window.innerWidth, window.innerHeight);
+
     this.setZoom(Math.min(widthRatio, heightRatio));
     this.setWidth(canvasWidth * this.getZoom());
     this.setHeight(canvasHeight * this.getZoom());

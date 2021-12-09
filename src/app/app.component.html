@@ -1,9 +1,7 @@
-<ng-template [ngIf]="pubnubInitiated">
+<main>
+  <ng-template [ngIf]="pubnubInitiated">
 
-  <h1>PubNub Loaded</h1>
+    <router-outlet></router-outlet>
 
-
-  <router-outlet></router-outlet>
-
-
-</ng-template>
+  </ng-template>
+</main>

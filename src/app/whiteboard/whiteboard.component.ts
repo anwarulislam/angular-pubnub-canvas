@@ -30,8 +30,8 @@ export class WhiteboardComponent implements OnInit {
 
   @Output() cursorPosition = new EventEmitter<any>();
 
-  canvasHeight: number = 1080
-  canvasWidth: number = 1920
+  canvasHeight: number = 628
+  canvasWidth: number = 1200
 
 
   baseBoard: HTMLCanvasElement;
