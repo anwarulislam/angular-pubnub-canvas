@@ -1,7 +1,7 @@
-<p>teacher works!</p>
+<!-- <p>teacher works!</p>
 
-<input type="text" placeholder="Message..." [(ngModel)]="text" (keydown.enter)="onComment(text)">
+<input type="text" placeholder="Message..." [(ngModel)]="text" (keydown.enter)="onComment(text)"> -->
 
 
 
-<app-whiteboard></app-whiteboard>
+<app-whiteboard [option]="{readonly: false}" (cursorPosition)="publishCoordination($event)"></app-whiteboard>

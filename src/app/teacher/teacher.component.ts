@@ -19,17 +19,11 @@ export class TeacherComponent implements OnInit {
     });
   }
 
-
-  onComment(text) {
-    console.log(text);
-
+  publishCoordination(obj) {
     this.pubnub.publish(
       {
         channel: 'public-channel',
-        message: {
-          name: 'Teacher',
-          text: text
-        },
+        message: obj
       },
       function (status, response) {
         if (status.error) {
@@ -39,8 +33,5 @@ export class TeacherComponent implements OnInit {
         }
       }
     );
-
-    this.text = '';
   }
-
 }

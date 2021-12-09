@@ -10,7 +10,8 @@ import { PubnubService } from '../pubnub.service';
 export class StudentComponent implements OnInit {
 
   pubnub: Pubnub;
-  messages: { name: string; text: string }[] = [];
+  showToolbar: boolean = false;
+  fakeCursorPosition = {}
 
   constructor(private pubnubService: PubnubService) { }
 
@@ -30,9 +31,7 @@ export class StudentComponent implements OnInit {
 
     this.pubnub.addListener({
       message: (messageObject) => {
-
-        this.messages = [...this.messages, messageObject.message];
-
+        this.fakeCursorPosition = messageObject.message;
       },
       presence: (presenceObject) => {
         console.log(presenceObject);

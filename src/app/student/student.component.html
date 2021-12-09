@@ -1,11 +1,3 @@
-<p>student works!</p>
+<h1>student works!</h1>
 
-
-<ul>
-    <ng-container *ngFor="let item of messages">
-        <li>
-            <strong>{{item.name}}</strong>
-            <p>{{item.text}}</p>
-        </li>
-    </ng-container>
-</ul>
+<app-whiteboard [option]="{readonly: true}" [fakeCursorPosition]="fakeCursorPosition"></app-whiteboard>
