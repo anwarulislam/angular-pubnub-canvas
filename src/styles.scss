@@ -37,13 +37,15 @@ body,
 @import "assets/styles/contextmenu";
 
 .fakecursor {
+    transition: 0.2s;
     position: absolute;
-    top: 10;
-    left: 10;
-    width: 10px;
-    height: 10px;
-    background-color: red;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px #000;
-    z-index: 99999999999999;
+    top: 0;
+    left: 0;
+}
+
+// fake cursor plus
+.fakecursor::after {
+    content: "+";
+    font-size: 40px;
+    color: #000;
 }

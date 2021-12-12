@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { bufferCount, bufferTime, debounceTime, delay, distinctUntilChanged, fromEvent, interval, Subject, tap, timeout } from 'rxjs';
 import { Action } from '../lib/action';
 import QBoard from '../lib/qboard';
+import { IPosition } from './position.model';
+import { WhiteboardService } from './whiteboard.service';
 
 export interface WhiteBoardOption {
   showToolbar?: boolean;
@@ -17,17 +20,11 @@ export class WhiteboardComponent implements OnInit {
   @ViewChild('baseBoard', { static: true }) baseCanvas: any;
   @ViewChild('whiteBoard', { static: true }) canvas: any;
 
+  @Input() latency: number = 500;
   @Input() option: WhiteBoardOption = {
     showToolbar: false,
     readonly: true
   };
-
-  @Input() set fakeCursorPosition(event) {
-    console.log(this.option)
-    if (this.option.readonly) {
-      this.changeFakeCursorPosition(event)
-    }
-  }
 
   @Output() cursorPosition = new EventEmitter<any>();
 
@@ -39,7 +36,9 @@ export class WhiteboardComponent implements OnInit {
   whiteBoard: HTMLCanvasElement;
   qboard: QBoard;
 
-  constructor() { }
+  mousePositions: IPosition[] = []
+
+  constructor(private whiteboard: WhiteboardService) { }
 
   ngOnInit(): void {
 
@@ -47,6 +46,29 @@ export class WhiteboardComponent implements OnInit {
     this.whiteBoard = this.canvas.nativeElement;
 
     this.initWhiteboard()
+
+    this.whiteboard.moveCursor$
+      .pipe(
+        tap(event => {
+          console.log('moveCursor$', event)
+          if (this.option.readonly) {
+            this.changeFakeCursorPosition(event)
+          }
+        })
+      )
+      .subscribe()
+
+    // this.whiteboard.moveCursor$.next(1);
+    // this.whiteboard.moveCursor$.next(2);
+    // this.whiteboard.moveCursor$.next(3);
+    // this.whiteboard.moveCursor$.next(4);
+    // this.whiteboard.moveCursor$.next(5);
+    // this.whiteboard.moveCursor$.next(6);
+    // this.whiteboard.moveCursor$.next(7);
+    // this.whiteboard.moveCursor$.next(8);
+    // this.whiteboard.moveCursor$.next(9);
+    // this.whiteboard.moveCursor$.next(10);
+    // this.whiteboard.moveCursor$.next(11);
   }
 
 
@@ -63,16 +85,34 @@ export class WhiteboardComponent implements OnInit {
     this.onAction(Action.Pen)
 
     let canvasContainer = document.querySelector('.canvas-container')
-    canvasContainer.addEventListener('mousemove', (e) => {
-      console.log(e)
-      this.cursorPosition.emit(this.getRelativeCoords(e))
-    })
+
+    fromEvent(canvasContainer, 'mousemove')
+      .pipe(
+        tap(e => {
+          this.mousePositions.push(this.getRelativeCoords(e))
+        }),
+        // debounceTime(this.latency),
+        // distinctUntilChanged(),
+        // tap((event: KeyboardEvent) => {
+        //   this.cursorPosition.emit(this.mousePositions)
+        //   this.mousePositions = []
+        // })
+      )
+      .subscribe();
+
+    interval(this.latency).pipe(
+      tap(() => {
+        if (this.mousePositions.length > 0) {
+          this.cursorPosition.emit(this.mousePositions)
+          this.mousePositions = []
+        }
+      })
+    ).subscribe()
 
     // add fake cursor to canvascontainer
     if (this.option.readonly) {
       this.addFakeCursor(canvasContainer)
     }
-
 
   }
 
@@ -86,7 +126,7 @@ export class WhiteboardComponent implements OnInit {
     this.qboard.action.doAction(action)
   }
 
-  changeFakeCursorPosition(event) {
+  changeFakeCursorPosition(event: IPosition) {
     let cursor: any = document.querySelector('.fakecursor')
 
     let { x, y, xp, yp } = event
@@ -94,11 +134,13 @@ export class WhiteboardComponent implements OnInit {
     if (cursor) {
       cursor.style.left = this.qboard.canvasWidth * xp + 'px'
       cursor.style.top = this.qboard.canvasHeight * yp + 'px'
+
+      window.requestAnimationFrame
     }
 
   }
 
-  getRelativeCoords(event) {
+  getRelativeCoords(event): IPosition {
     let x = event.offsetX || event.layerX
     let y = event.offsetY || event.layerY
 

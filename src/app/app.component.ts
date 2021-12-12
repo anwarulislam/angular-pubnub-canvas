@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
+import { delay, mergeMap, of, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PubnubService } from './pubnub.service';
 
@@ -19,6 +20,21 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.initPubnub();
+
+    // let queue = new Subject();
+    // queue.pipe(
+    //   mergeMap((i) => of(i).pipe(
+    //     tap(() => console.log('processing', i)),
+    //     delay(2000)
+    //   ))
+    // ).subscribe((i) => {
+    //   console.log('done', i);
+    // })
+
+    // queue.next(1);
+    // queue.next(2);
+    // queue.next(3);
+    // queue.next(4);
   }
 
   loadScript(url: string = 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.5.min.js') {

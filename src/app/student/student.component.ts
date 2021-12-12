@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
+import { bufferCount, bufferTime, concatMap, delay, from, Observable, of, tap } from 'rxjs';
 import { PubnubService } from '../pubnub.service';
+import { IPosition } from '../whiteboard/position.model';
+import { WhiteboardService } from '../whiteboard/whiteboard.service';
 
 @Component({
   selector: 'app-student',
@@ -11,9 +14,9 @@ export class StudentComponent implements OnInit {
 
   pubnub: Pubnub;
   showToolbar: boolean = false;
-  fakeCursorPosition = {}
+  fakeCursorPositions: IPosition[] = []
 
-  constructor(private pubnubService: PubnubService) { }
+  constructor(private pubnubService: PubnubService, private whiteboard: WhiteboardService) { }
 
   ngOnInit(): void {
     this.pubnubService.pubnubSubject.subscribe(pubnub => {
@@ -21,6 +24,7 @@ export class StudentComponent implements OnInit {
 
       this.listenForMessages();
     });
+
   }
 
   listenForMessages() {
@@ -31,13 +35,26 @@ export class StudentComponent implements OnInit {
 
     this.pubnub.addListener({
       message: (messageObject) => {
-        this.fakeCursorPosition = messageObject.message;
-        console.log(this.fakeCursorPosition)
+        this.fakeCursorPositions = messageObject.message;
+        this.moveCursorFromEvents(this.fakeCursorPositions);
+        // console.log(this.fakeCursorPositions)
       },
       presence: (presenceObject) => {
         console.log(presenceObject);
       }
     });
+  }
+
+  moveCursorFromEvents(arr: IPosition[]) {
+
+    from(arr).pipe(
+      concatMap(item => of(item).pipe(delay(500 / arr.length))),
+      tap(item => this.whiteboard.moveCursor$.next(item))
+    ).subscribe()
+
+    // arr.forEach((position, i) => {
+    //   this.whiteboard.moveCursor$.next(position);
+    // });
   }
 
 }

@@ -20,6 +20,7 @@ export class TeacherComponent implements OnInit {
   }
 
   publishCoordination(obj) {
+    console.log(obj);
     this.pubnub.publish(
       {
         channel: 'public-channel',
