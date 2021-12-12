@@ -6,6 +6,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { ActionNamePipe } from './pipes/action-name.pipe';
 import { TooltipModule } from '../shared/directives/tooltip.directive';
 import { FasIconPipe } from './pipes/fas-icon.pipe';
+import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 
 
 
@@ -17,7 +18,8 @@ import { FasIconPipe } from './pipes/fas-icon.pipe';
 
     // Pipes
     ActionNamePipe,
-     FasIconPipe
+     FasIconPipe,
+     UndoRedoComponent
   ],
   exports: [WhiteboardComponent],
   imports: [

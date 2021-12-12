@@ -15,11 +15,13 @@ export default class Page extends fabric.Canvas {
   modified = false;
   
   fitToWindow = (canvasWidth: number, canvasHeight: number): void => {
+
+    let maxWidth = 600;
     
     let widthRatio = window.innerWidth / canvasWidth;
     let heightRatio = window.innerHeight / canvasHeight;
     
-    if (window.innerWidth > 1200) {
+    if (window.innerWidth > maxWidth) {
       widthRatio = canvasWidth / canvasWidth;
       heightRatio = canvasHeight / canvasHeight;
     }

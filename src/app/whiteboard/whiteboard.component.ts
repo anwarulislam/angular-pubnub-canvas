@@ -23,6 +23,7 @@ export class WhiteboardComponent implements OnInit {
   };
 
   @Input() set fakeCursorPosition(event) {
+    console.log(this.option)
     if (this.option.readonly) {
       this.changeFakeCursorPosition(event)
     }
@@ -30,8 +31,8 @@ export class WhiteboardComponent implements OnInit {
 
   @Output() cursorPosition = new EventEmitter<any>();
 
-  canvasHeight: number = 628
-  canvasWidth: number = 1200
+  canvasHeight: number = 600
+  canvasWidth: number = 600
 
 
   baseBoard: HTMLCanvasElement;
@@ -63,6 +64,7 @@ export class WhiteboardComponent implements OnInit {
 
     let canvasContainer = document.querySelector('.canvas-container')
     canvasContainer.addEventListener('mousemove', (e) => {
+      console.log(e)
       this.cursorPosition.emit(this.getRelativeCoords(e))
     })
 
@@ -89,8 +91,11 @@ export class WhiteboardComponent implements OnInit {
 
     let { x, y, xp, yp } = event
 
-    cursor.style.left = this.qboard.canvasWidth * xp + 'px'
-    cursor.style.top = this.qboard.canvasHeight * yp + 'px'
+    if (cursor) {
+      cursor.style.left = this.qboard.canvasWidth * xp + 'px'
+      cursor.style.top = this.qboard.canvasHeight * yp + 'px'
+    }
+
   }
 
   getRelativeCoords(event) {

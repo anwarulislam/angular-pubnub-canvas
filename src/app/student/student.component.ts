@@ -32,6 +32,7 @@ export class StudentComponent implements OnInit {
     this.pubnub.addListener({
       message: (messageObject) => {
         this.fakeCursorPosition = messageObject.message;
+        console.log(this.fakeCursorPosition)
       },
       presence: (presenceObject) => {
         console.log(presenceObject);
