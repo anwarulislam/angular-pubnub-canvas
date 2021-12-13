@@ -1,17 +1,15 @@
-import { fabric } from "fabric";
 import { PartialRecord } from "@mehra/ts";
-
-import AssertType from "../types/assert";
-import { FabricTeXImage } from "../types/fabric";
-
-import { Tool, Tools } from "./tools";
-import Pages from "./pages";
-import FileHandler from "./files";
+import { fabric } from "fabric";
 import ClipboardHandler from "./clipboard";
+import FileHandler from "./files";
 import HistoryHandler from "./history";
-import { Dash, Fill, Stroke, Style } from "./styles";
 import Page from "./page";
-import TeXToDataURL, { LaTeXError } from "./latex";
+import Pages from "./pages";
+import { Dash, Fill, Stroke, Style } from "./styles";
+import { Tool, Tools } from "./tools";
+
+
+// import TeXToDataURL, { LaTeXError } from "./latex";
 
 export enum Action {
   PreviousPage = "previousPage",
@@ -40,7 +38,7 @@ export enum Action {
   Line = "line",
   Ellipse = "ellipse",
   Rectangle = "rectangle",
-  LaTeX = "latex",
+  // LaTeX = "latex",
 
   Dotted = "dotted",
   Dashed = "dashed",
@@ -72,7 +70,7 @@ export const nameMap: PartialRecord<Action, string> = {
   duplicate: "Clone",
   eraser: "Cut / Eraser",
   rectangle: "Rect.",
-  latex: "LaTeX",
+  // latex: "LaTeX",
   transparent: "Unfilled",
   halfFilled: "Half Fill",
   resetStyles: "Reset Styles",
@@ -159,7 +157,7 @@ export default class ActionHandler {
       line: () => this.switchTool(tools.Line),
       ellipse: () => this.switchTool(tools.Ellipse),
       rectangle: () => this.switchTool(tools.Rectangle),
-      latex: this.requestTeX,
+      // latex: this.requestTeX,
 
       dotted: () => this.setDash(Dash.Dotted),
       dashed: () => this.setDash(Dash.Dashed),
@@ -213,42 +211,5 @@ export default class ActionHandler {
     } else {
       this.setStyle(null, null, fill);
     }
-  };
-
-  requestTeX = async (): Promise<
-    "success" | "no latex entered" | "invalid latex"
-  > => {
-    const text = window.prompt("Enter LaTeX source");
-    if (text === null) return "no latex entered";
-
-    let dataURL: `data:image/svg+xml,${string}`;
-    try {
-      dataURL = TeXToDataURL(text);
-    } catch (e: unknown) {
-      AssertType<LaTeXError>(e);
-      // eslint-disable-next-line no-console
-      console.error(e, e.node);
-      window.alert(
-        `Error in LaTeX: ${e.errorText}
-
-More details printed to console.`
-      );
-
-      return "invalid latex";
-    }
-
-    const img: FabricTeXImage = await this.canvas.addImage(
-      dataURL,
-      {},
-      { scaleX: 3, scaleY: 3, data: { texSource: text } }
-    );
-
-    this.history.add([img]);
-
-    // apparently this does something?
-    await this.history.undo();
-    await this.history.redo();
-
-    return "success";
   };
 }
