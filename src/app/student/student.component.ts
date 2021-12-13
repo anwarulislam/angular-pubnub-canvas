@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
-import { bufferCount, bufferTime, concatMap, delay, from, Observable, of, tap } from 'rxjs';
+import { concatMap, delay, from, of, Subscription, tap } from 'rxjs';
 import { PubnubService } from '../pubnub.service';
-import { IPosition } from '../whiteboard/position.model';
+import { EventName, IPosition } from '../whiteboard/position.model';
 import { WhiteboardService } from '../whiteboard/whiteboard.service';
 
 @Component({
@@ -22,12 +22,12 @@ export class StudentComponent implements OnInit {
     this.pubnubService.pubnubSubject.subscribe(pubnub => {
       this.pubnub = pubnub;
 
-      this.listenForMessages();
+      this.listenForEvents();
     });
 
   }
 
-  listenForMessages() {
+  listenForEvents() {
     this.pubnub.subscribe({
       channels: ['public-channel'],
       withPresence: true
@@ -35,9 +35,8 @@ export class StudentComponent implements OnInit {
 
     this.pubnub.addListener({
       message: (messageObject) => {
-        this.fakeCursorPositions = messageObject.message;
-        this.moveCursorFromEvents(this.fakeCursorPositions);
-        // console.log(this.fakeCursorPositions)
+        console.log('messageObject', messageObject);
+        this.handleEvents(messageObject.message);
       },
       presence: (presenceObject) => {
         console.log(presenceObject);
@@ -45,16 +44,37 @@ export class StudentComponent implements OnInit {
     });
   }
 
+  handleEvents(event) {
+    switch (event.type) {
+      case EventName.CURSOR_MOVE:
+        this.handleCursorMovementEvent(event.target);
+        break;
+      case EventName.OBJECT_ADDED:
+        console.log('cursor down', event);
+        break;
+      default:
+        break;
+    }
+  }
+
+  handleCursorMovementEvent(response) {
+    this.fakeCursorPositions = response.message;
+    this.moveCursorFromEvents(this.fakeCursorPositions);
+  }
+
+
+  cursorMoving$: Subscription[] = [];
   moveCursorFromEvents(arr: IPosition[]) {
+    this.cursorMoving$.push(
+      from(arr).pipe(
+        concatMap(item => of(item).pipe(delay(500 / arr.length))),
+        tap(item => this.whiteboard.moveCursor$.next(item))
+      ).subscribe()
+    )
+  }
 
-    from(arr).pipe(
-      concatMap(item => of(item).pipe(delay(500 / arr.length))),
-      tap(item => this.whiteboard.moveCursor$.next(item))
-    ).subscribe()
-
-    // arr.forEach((position, i) => {
-    //   this.whiteboard.moveCursor$.next(position);
-    // });
+  ngOnDestroy() {
+    this.cursorMoving$.forEach(sub => sub.unsubscribe());
   }
 
 }

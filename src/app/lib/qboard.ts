@@ -11,13 +11,7 @@ import StyleHandler, { Dash, Fill, Stroke, Style } from "./styles";
 import ActionHandler from "./action";
 import KeyboardHandler, { KeyMap } from "./keyboard";
 import { HTMLChildElement } from "../types/html";
-import {
-  FabricIEvent,
-  GuaranteedIObjectOptions,
-  isFabricCollection,
-  ObjectId,
-  PathEvent,
-} from "../types/fabric";
+import { FabricIEvent, GuaranteedIObjectOptions, isFabricCollection, ObjectId, PathEvent } from "../types/fabric";
 
 type Async<T = void> = T | Promise<T>;
 

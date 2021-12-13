@@ -4,5 +4,6 @@
 
 
 
-<app-whiteboard [option]="{readonly: false, showToolbar: true}" (cursorPosition)="publishCoordination($event)">
+<app-whiteboard [option]="{readonly: false, showToolbar: true}" (cursorPosition)="publishCoordination($event)"
+    (eventFired)="onEventFire($event)">
 </app-whiteboard>

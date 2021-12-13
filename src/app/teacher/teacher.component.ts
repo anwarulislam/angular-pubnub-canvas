@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
 import { PubnubService } from '../pubnub.service';
+import { EventName } from '../whiteboard/position.model';
 
 @Component({
   selector: 'app-teacher',
@@ -20,19 +21,39 @@ export class TeacherComponent implements OnInit {
   }
 
   publishCoordination(obj) {
-    console.log(obj);
     this.pubnub.publish(
       {
         channel: 'public-channel',
-        message: obj
+        message: {
+          type: EventName.CURSOR_MOVE,
+          target: obj
+        }
       },
       function (status, response) {
         if (status.error) {
           console.log(status);
         } else {
-          console.log(response);
+          // console.log(response);
         }
       }
     );
   }
+
+  onEventFire(e) {
+    console.log(e);
+    this.pubnub.publish(
+      {
+        channel: 'public-channel',
+        message: e
+      },
+      function (status, response) {
+        if (status.error) {
+          console.log(status);
+        } else {
+          // console.log(response);
+        }
+      }
+    );
+  }
+
 }

@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { bufferCount, bufferTime, debounceTime, delay, distinctUntilChanged, fromEvent, interval, Subject, tap, timeout } from 'rxjs';
+import { fromEvent, interval, tap } from 'rxjs';
 import { Action } from '../lib/action';
 import QBoard from '../lib/qboard';
-import { IPosition } from './position.model';
+import { EventName, IPosition } from './position.model';
 import { WhiteboardService } from './whiteboard.service';
+
+
 
 export interface WhiteBoardOption {
   showToolbar?: boolean;
@@ -27,9 +29,10 @@ export class WhiteboardComponent implements OnInit {
   };
 
   @Output() cursorPosition = new EventEmitter<any>();
+  @Output() eventFired = new EventEmitter<any>();
 
-  canvasHeight: number = 600
-  canvasWidth: number = 600
+  canvasHeight: number = 300
+  canvasWidth: number = 400
 
 
   baseBoard: HTMLCanvasElement;
@@ -48,27 +51,12 @@ export class WhiteboardComponent implements OnInit {
     this.initWhiteboard()
 
     this.whiteboard.moveCursor$
-      .pipe(
-        tap(event => {
-          console.log('moveCursor$', event)
-          if (this.option.readonly) {
-            this.changeFakeCursorPosition(event)
-          }
-        })
-      )
+      .pipe(tap(event => {
+        if (this.option.readonly) {
+          this.changeFakeCursorPosition(event)
+        }
+      }))
       .subscribe()
-
-    // this.whiteboard.moveCursor$.next(1);
-    // this.whiteboard.moveCursor$.next(2);
-    // this.whiteboard.moveCursor$.next(3);
-    // this.whiteboard.moveCursor$.next(4);
-    // this.whiteboard.moveCursor$.next(5);
-    // this.whiteboard.moveCursor$.next(6);
-    // this.whiteboard.moveCursor$.next(7);
-    // this.whiteboard.moveCursor$.next(8);
-    // this.whiteboard.moveCursor$.next(9);
-    // this.whiteboard.moveCursor$.next(10);
-    // this.whiteboard.moveCursor$.next(11);
   }
 
 
@@ -84,24 +72,29 @@ export class WhiteboardComponent implements OnInit {
 
     this.onAction(Action.Pen)
 
+
+    // this.qboard.baseCanvas.on('mouse:move', (event) => {  console.log(event) })
+
+
+    // this.qboard.baseCanvas.on('object:moving', this.emitObjectModifying)
+    // this.qboard.baseCanvas.on('object:scaling', this.emitObjectModifying)
+    // this.qboard.baseCanvas.on('object:rotating', this.emitObjectModifying)
+    // this.qboard.baseCanvas.on('path:created', this.emitObjectModifying)
+    this.qboard.baseCanvas.on(EventName.OBJECT_ADDED, (event) => { this.emitObjectCreated(event) })
+
     let canvasContainer = document.querySelector('.canvas-container')
 
-    fromEvent(canvasContainer, 'mousemove')
-      .pipe(
-        tap(e => {
-          this.mousePositions.push(this.getRelativeCoords(e))
-        }),
-        // debounceTime(this.latency),
-        // distinctUntilChanged(),
-        // tap((event: KeyboardEvent) => {
-        //   this.cursorPosition.emit(this.mousePositions)
-        //   this.mousePositions = []
-        // })
-      )
-      .subscribe();
+    fromEvent(canvasContainer, 'mousemove').pipe(tap(e => {
+
+      this.mousePositions.push(this.getRelativeCoords(e))
+
+    })).subscribe();
 
     interval(this.latency).pipe(
       tap(() => {
+
+        // console.log(this.qboard.history)
+
         if (this.mousePositions.length > 0) {
           this.cursorPosition.emit(this.mousePositions)
           this.mousePositions = []
@@ -114,6 +107,13 @@ export class WhiteboardComponent implements OnInit {
       this.addFakeCursor(canvasContainer)
     }
 
+  }
+
+  emitObjectCreated(event) {
+    this.eventFired.emit({
+      type: EventName.OBJECT_ADDED,
+      target: event?.target
+    })
   }
 
   addFakeCursor(container) {
@@ -131,13 +131,13 @@ export class WhiteboardComponent implements OnInit {
 
     let { x, y, xp, yp } = event
 
+    let currentX = this.qboard.canvasWidth * xp
+    let currentY = this.qboard.canvasHeight * yp
+
     if (cursor) {
-      cursor.style.left = this.qboard.canvasWidth * xp + 'px'
-      cursor.style.top = this.qboard.canvasHeight * yp + 'px'
-
-      window.requestAnimationFrame
+      cursor.style.left = currentX + 'px'
+      cursor.style.top = currentY + 'px'
     }
-
   }
 
   getRelativeCoords(event): IPosition {

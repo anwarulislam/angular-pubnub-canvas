@@ -10,19 +10,6 @@ body {
     color: white;
 }
 
-html,
-body,
-.container {
-    height: 100%;
-    width: 100%;
-}
-
-.container {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
-
 .canvas-container {
     position: absolute !important;
 }
@@ -41,6 +28,7 @@ body,
     position: absolute;
     top: 0;
     left: 0;
+    transform: translate(-50%, -50%);
 }
 
 // fake cursor plus
