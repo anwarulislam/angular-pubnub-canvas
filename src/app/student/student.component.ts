@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
 import { concatMap, delay, from, of, Subscription, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { PubnubService } from '../pubnub.service';
 import { EventName, IPosition } from '../whiteboard/position.model';
 import { WhiteboardService } from '../whiteboard/whiteboard.service';
+
+declare const PubNub: any
 
 @Component({
   selector: 'app-student',
@@ -19,11 +22,19 @@ export class StudentComponent implements OnInit {
   constructor(private pubnubService: PubnubService, private whiteboard: WhiteboardService) { }
 
   ngOnInit(): void {
-    this.pubnubService.pubnubSubject.subscribe(pubnub => {
-      this.pubnub = pubnub;
+
+    this.pubnubService.loadScript().then(() => {
+
+      const clientUUID = 'student-1'
+
+      this.pubnub = new PubNub({
+        publishKey: environment.publishKey,
+        subscribeKey: environment.subscribeKey,
+        uuid: clientUUID,
+      });
 
       this.listenForEvents();
-    });
+    })
 
   }
 
@@ -33,15 +44,21 @@ export class StudentComponent implements OnInit {
       withPresence: true
     });
 
-    this.pubnub.addListener({
-      message: (messageObject) => {
-        console.log('messageObject', messageObject);
-        this.handleEvents(messageObject.message);
-      },
-      presence: (presenceObject) => {
-        console.log(presenceObject);
-      }
-    });
+    try {
+      this.pubnub.addListener({
+        message: (messageObject) => {
+          console.log('messageObject', messageObject);
+          this.handleEvents(messageObject.message);
+        },
+        presence: (presenceObject) => {
+          console.log(presenceObject);
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   handleEvents(event) {

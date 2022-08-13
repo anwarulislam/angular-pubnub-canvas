@@ -5,18 +5,19 @@ import { StudentComponent } from './student/student.component';
 import { TeacherComponent } from './teacher/teacher.component';
 
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   pathMatch: 'full',
-  //   component: AppComponent
-  // },
   {
     path: '',
-    component: StudentComponent
-  },
-  {
-    path: 'teacher',
-    component: TeacherComponent
+    component: AppComponent,
+    children: [
+      {
+        path: '',
+        component: StudentComponent
+      },
+      {
+        path: 'teacher',
+        component: TeacherComponent
+      },
+    ]
   },
 ];
 

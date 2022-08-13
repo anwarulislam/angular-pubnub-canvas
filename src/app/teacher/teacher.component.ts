@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as Pubnub from 'pubnub';
+import { environment } from 'src/environments/environment';
 import { PubnubService } from '../pubnub.service';
 import { EventName } from '../whiteboard/position.model';
+
+declare const PubNub: any
 
 @Component({
   selector: 'app-teacher',
@@ -15,9 +18,17 @@ export class TeacherComponent implements OnInit {
   constructor(private pubnubService: PubnubService) { }
 
   ngOnInit(): void {
-    this.pubnubService.pubnubSubject.subscribe(pubnub => {
-      this.pubnub = pubnub;
-    });
+    this.pubnubService.loadScript().then(() => {
+
+      const clientUUID = 'teacher'
+
+      this.pubnub = new PubNub({
+        publishKey: environment.publishKey,
+        subscribeKey: environment.subscribeKey,
+        uuid: clientUUID,
+      });
+
+    })
   }
 
   publishCoordination(obj) {
